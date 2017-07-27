@@ -8,10 +8,9 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
-  console.log('a user connected');
+  console.log('a user connected', socket.id);
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
-    console.log(socket.id);
     socket.broadcast.to(socket.id).emit('chat message', 'for your eyes only');
   });
 });
