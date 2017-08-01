@@ -6,6 +6,15 @@ var mongoose = require('mongoose'),
 Users = mongoose.model('Users'),
 Token = mongoose.model('Token');
 
+/*
+*
+* Test route for socket connection
+*
+*
+* */
+exports.home = function(req, res){
+    res.sendFile(__dirname + '/index.html');
+};
 
 //
 //
@@ -337,3 +346,5 @@ exports.get_all_token = function(req, res) {
     res.json(users);
   });
 };
+
+
