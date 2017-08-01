@@ -25,7 +25,7 @@ function tokenGenerate(user){
     randomstring += chars.substring(rnum,rnum+1);
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise(function(resolve, reject){
     Token.findOne({'token': randomstring}, function(err, token){
       if(err){
         console.log(err);
