@@ -313,11 +313,6 @@ exports.get_user = function(req, res) {
 exports.get_all_users = function(req, res) {
   var extract = req.header('Authorization').split(" ");
   var token = extract[1];
-  // Users.find({}, function(err, users) {
-  //   if (err)
-  //     res.send(err);
-  //   res.json(users);
-  // });
 
   Token.findOne({'token': token}, function(err, token){
     if(err){
