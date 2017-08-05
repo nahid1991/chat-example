@@ -21,8 +21,10 @@ var promise = mongoose.connect('mongodb://localhost/Chatdb', {
 
 
 io.on('connection', function(socket){
-  console.log('a user connected', socket.id);
+    console.log('a user connected', socket.id);
 });
+
+
 
 io.sockets.on('connection', socket.respond);
 
