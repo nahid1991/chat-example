@@ -25,7 +25,10 @@
       $(function () {
         var socket = io();
         $('form').submit(function(){
-          socket.emit('something else', $('#m').val());
+          var testObject = {
+              message: $('#m').val()
+          };
+          socket.emit('something else', testObject);
           $('#m').val('');
           return false;
         });

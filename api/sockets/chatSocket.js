@@ -11,7 +11,7 @@ module.exports.respond = function(socket_io){
 
         // as is proper, protocol logic like
         // this belongs in a controller:
-        socket_io.emit('something else', msg);
-        console.log(socket_io.id + ' sent: ' + msg);
+        socket_io.emit('something else', msg.message);
+        console.log(socket_io.id + ' sent: ' + JSON.stringify(msg));
     });
 };
