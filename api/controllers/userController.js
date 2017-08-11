@@ -82,7 +82,6 @@ function tokenGenerate(user){
 //
 
 exports.find_or_create_an_user_facebook = function(req, res) {
-  // console.log(req.body.email);
   Users.findOne({$or:[{'email': req.body.email}, {'social_id': req.body.user_id}]}, function(err, users) {
     if (err){
       console.log(err);

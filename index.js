@@ -9,24 +9,21 @@ var Friends = require('../chat-example/api/models/friendsModel');
 var Chat = require('../chat-example/api/models/chatModel');
 var Token = require('../chat-example/api/models/tokenModel');
 var bodyParser = require('body-parser');
-var socket = require('../chat-example/api/sockets/chatSocket');
+require('../chat-example/api/sockets/chatSocket')(io);
 
 // mongoose.Promise = global.Promise;
 // mongoose.connect('mongodb://localhost:27017/Chatdb');
 
-var promise = mongoose.connect('mongodb://localhost/Chatdb', {
+mongoose.connect('mongodb://localhost/Chatdb', {
     useMongoClient: true,
     /* other options */
 });
 
 
-io.on('connection', function(socket){
-    console.log('a user connected', socket.id);
-});
 
+// io.sockets.on('connection', socketFile.respond);
+// socketFile(io);
 
-
-io.sockets.on('connection', socket.respond);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
