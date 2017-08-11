@@ -10,7 +10,6 @@ module.exports = function(io){
             // as is proper, protocol logic like
             // this belongs in a controller:
             io.emit('something else', msg);
-            console.log(socket.id + ' sent: ' + JSON.stringify(msg));
         });
 
         io.on('disconnect', function(){
