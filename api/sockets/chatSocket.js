@@ -5,6 +5,7 @@ module.exports = function(io){
     // this function expects a socket_io connection as argument
     // now we can do whatever we want:
     io.on('connection', function(socket){
+        console.log('a user connected', socket.id);
         socket.on('something else',function(msg){
 
             // as is proper, protocol logic like
