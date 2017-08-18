@@ -3,7 +3,6 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 4200;
 var mongoose = require('mongoose');
-var Task = require('../chat-example/api/models/todoListModel');
 var Users = require('../chat-example/api/models/userModel');
 var Friends = require('../chat-example/api/models/friendsModel');
 var Chat = require('../chat-example/api/models/chatModel');
@@ -46,7 +45,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-var routes = require('../chat-example/api/routes/todoListRoutes');
+var routes = require('./api/routes/routes');
 routes(app);
 
 

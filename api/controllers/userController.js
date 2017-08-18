@@ -5,16 +5,6 @@ var mongoose = require('mongoose'),
     Friends = mongoose.model('Friends'),
     Token = mongoose.model('Token');
 
-/*
-*
-* Test route for socket connection
-*
-*
-* */
-exports.home = function (req, res) {
-    res.sendFile(__dirname + '/index.html');
-};
-
 //
 //
 //
@@ -108,8 +98,6 @@ exports.findOrCreateAnUserFacebook = function (req, res) {
                         }, function (err) {
                             console.log(err);
                         });
-                        // console.log(result);
-                        // res.json(result);
                     }
                 });
 
@@ -339,7 +327,7 @@ exports.getFriends = function (req, res) {
     Friends.find({$or: [{'receiver': req.params.user}, {'sender': req.params.user}]}, function (err, friends) {
         res.json(friends);
     });
-}
+};
 
 exports.postFriends = function (req, res) {
     var newFriends = new Friends(
@@ -353,6 +341,6 @@ exports.postFriends = function (req, res) {
     newFriends.save(function(err, friends){
        res.json(friends);
     });
-}
+};
 
 
