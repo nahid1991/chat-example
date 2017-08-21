@@ -26,7 +26,7 @@ module.exports = function (app) {
 
 
     app.route('/users/:user')
-        .delete(userController.deleteUser);
+        .get(userController.getUserInfo);
 
     app.route('/users/get/:user')
         .get(userController.getUser);

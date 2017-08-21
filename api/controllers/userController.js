@@ -260,13 +260,14 @@ exports.userInfo = function (req, res) {
 //
 //
 
-exports.deleteUser = function (req, res) {
-    Users.remove({
-        email: req.params.user
+exports.getUserInfo = function (req, res) {
+    Users.findOne({
+        _id: req.params.user
     }, function (err, task) {
-        if (err)
+        if (err){
             res.send(err);
-        res.json({message: 'User successfully deleted'});
+        }
+        res.json(task);
     });
 };
 
@@ -324,23 +325,50 @@ exports.getAllToken = function (req, res) {
 };
 
 exports.getFriends = function (req, res) {
-    Friends.find({$or: [{'receiver': req.params.user}, {'sender': req.params.user}]}, function (err, friends) {
-        res.json(friends);
+    retrieveSenderUser(req.params.user, function(err, friends){
+        if(err){
+            res.json(err);
+        } else {
+            res.json(friends);
+        }
     });
+};
+
+function retrieveSenderUser(id, callback) {
+    Friends.find({user_side: id} , {'friend_side': 1, '_id': 0})
+        .lean()
+        .populate('friend_side')
+        .exec(function(err, data){
+            if(err){
+                callback(err, null);
+            } else {
+                callback(null, data);
+            }
+        });
 };
 
 exports.postFriends = function (req, res) {
     var newFriends = new Friends(
         {
-            receiver: req.params.userOne,
-            sender: req.params.userTwo,
+            user_side: req.params.userOne,
+            friend_side: req.params.userTwo,
             accepted: true
         }
     );
 
-    newFriends.save(function(err, friends){
-       res.json(friends);
-    });
+    newFriends.save();
+
+    var newFriendsTwo = new Friends(
+        {
+            user_side: req.params.userTwo,
+            friend_side: req.params.userOne,
+            accepted: true
+        }
+    );
+
+    newFriendsTwo.save();
+
+    res.json(newFriends);
 };
 
 

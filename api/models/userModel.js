@@ -42,7 +42,11 @@ var UserSchema = new Schema({
         type: Boolean,
         default: false
     },
-    social_id: String
+    social_id: String,
+    active: {
+        type: Boolean,
+        default: false
+    }
 });
 
 module.exports = mongoose.model('Users', UserSchema);
