@@ -1,9 +1,9 @@
 'use strict';
 
 var mongoose = require('mongoose'),
-    Users = mongoose.model('Users'),
-    Friends = mongoose.model('Friends'),
-    Token = mongoose.model('Token');
+	Users = mongoose.model('Users'),
+	Friends = mongoose.model('Friends'),
+	Token = mongoose.model('Token');
 
 //
 //
@@ -15,41 +15,41 @@ var mongoose = require('mongoose'),
 
 
 function tokenGenerate(user) {
-    var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-    var string_length = 50;
-    var randomstring = '';
-    for (var i = 0; i < string_length; i++) {
-        var rnum = Math.floor(Math.random() * chars.length);
-        randomstring += chars.substring(rnum, rnum + 1);
-    }
-
-    return new Promise(function (resolve, reject) {
-        Token.findOne({'token': randomstring}, function (err, token) {
-            if (err) {
-                console.log(err);
-                res.send(err);
-            } else {
-
-                if (token == null) {
-                    var new_token = new Token({
-                        user: user,
-                        token: randomstring
-                    });
-                    new_token.save(function (err, token) {
-                        if (err) {
-                            console.log(err);
-                            resolve(err);
-                        } else {
-                            // console.log(token.token);
-                            resolve(token.token);
-                        }
-                    });
-                } else {
-                    tokenGenerate(user);
-                }
-            }
-        });
-    });
+	var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+	var string_length = 50;
+	var randomstring = '';
+	for (var i = 0; i < string_length; i++) {
+		var rnum = Math.floor(Math.random() * chars.length);
+		randomstring += chars.substring(rnum, rnum + 1);
+	}
+	
+	return new Promise(function (resolve, reject) {
+		Token.findOne({'token': randomstring}, function (err, token) {
+			if (err) {
+				console.log(err);
+				res.send(err);
+			} else {
+				
+				if (token == null) {
+					var new_token = new Token({
+						user: user,
+						token: randomstring
+					});
+					new_token.save(function (err, token) {
+						if (err) {
+							console.log(err);
+							resolve(err);
+						} else {
+							// console.log(token.token);
+							resolve(token.token);
+						}
+					});
+				} else {
+					tokenGenerate(user);
+				}
+			}
+		});
+	});
 }
 
 //
@@ -70,61 +70,61 @@ function tokenGenerate(user) {
 //
 
 exports.findOrCreateAnUserFacebook = function (req, res) {
-    Users.findOne({$or: [{'email': req.body.email}, {'social_id': req.body.user_id}]}, function (err, users) {
-        if (err) {
-            console.log(err);
-            res.send(err);
-        }
-        else {
-            if (users == null) {
-                var new_user = new Users(
-                    {
-                        name: req.body.name,
-                        social_id: req.body.user_id,
-                        email: (req.body.email) ? req.body.email : req.body.user_id,
-                        access_key: req.body.access_key,
-                        facebook: true,
-                        picture: 'https://graph.facebook.com/' + req.body.user_id + '/picture?type=large'
-                    }
-                );
-                new_user.save(function (err, user) {
-                    if (err) {
-                        console.log(err);
-                        res.send(err);
-                    } else {
-                        tokenGenerate(user).then(function (response) {
-                            console.log(response);
-                            res.json(response);
-                        }, function (err) {
-                            console.log(err);
-                        });
-                    }
-                });
-
-            } else {
-                users.social_id = req.body.user_id;
-                users.access_key = req.body.access_key;
-                users.picture = 'https://graph.facebook.com/' + req.body.user_id + '/picture?type=large';
-                users.facebook = true;
-                users.update_at = Date.now();
-                users.save();
-
-                Token.remove({user: users._id}, function (err, token) {
-                    if (err) {
-                        res.send(err);
-                    } else {
-                        tokenGenerate(users).then(function (response) {
-                            // console.log(response);
-                            res.json(response);
-                        }, function (err) {
-                            console.log(err);
-                        });
-                    }
-
-                });
-            }
-        }
-    });
+	Users.findOne({$or: [{'email': req.body.email}, {'social_id': req.body.user_id}]}, function (err, users) {
+		if (err) {
+			console.log(err);
+			res.send(err);
+		}
+		else {
+			if (users == null) {
+				var new_user = new Users(
+					{
+						name: req.body.name,
+						social_id: req.body.user_id,
+						email: (req.body.email) ? req.body.email : req.body.user_id,
+						access_key: req.body.access_key,
+						facebook: true,
+						picture: 'https://graph.facebook.com/' + req.body.user_id + '/picture?type=large'
+					}
+				);
+				new_user.save(function (err, user) {
+					if (err) {
+						console.log(err);
+						res.send(err);
+					} else {
+						tokenGenerate(user).then(function (response) {
+							console.log(response);
+							res.json(response);
+						}, function (err) {
+							console.log(err);
+						});
+					}
+				});
+				
+			} else {
+				users.social_id = req.body.user_id;
+				users.access_key = req.body.access_key;
+				users.picture = 'https://graph.facebook.com/' + req.body.user_id + '/picture?type=large';
+				users.facebook = true;
+				users.update_at = Date.now();
+				users.save();
+				
+				Token.remove({user: users._id}, function (err, token) {
+					if (err) {
+						res.send(err);
+					} else {
+						tokenGenerate(users).then(function (response) {
+							// console.log(response);
+							res.json(response);
+						}, function (err) {
+							console.log(err);
+						});
+					}
+					
+				});
+			}
+		}
+	});
 };
 
 //
@@ -145,64 +145,64 @@ exports.findOrCreateAnUserFacebook = function (req, res) {
 //
 
 exports.findOrCreateAnUserGoogle = function (req, res) {
-    // console.log(req.body.email);
-    Users.findOne({'email': req.body.email}, function (err, users) {
-        if (err) {
-            console.log(err);
-            res.send(err);
-        }
-        else {
-            if (users == null) {
-                var new_user = new Users(
-                    {
-                        name: req.body.name,
-                        social_id: req.body.user_id,
-                        email: req.body.email,
-                        access_key: req.body.access_key,
-                        google: true,
-                        picture: req.body.image_url
-                    }
-                );
-                new_user.save(function (err, user) {
-                    if (err) {
-                        console.log(err);
-                        res.send(err);
-                    } else {
-                        tokenGenerate(user).then(function (response) {
-                            // console.log(response);
-                            res.json(response);
-                        }, function (err) {
-                            console.log(err);
-                        });
-                    }
-                });
-
-            } else {
-                users.social_id = req.body.user_id;
-                users.access_key = req.body.access_key;
-                users.picture = req.body.image_url;
-                users.google = true;
-                users.update_at = Date.now();
-                users.save();
-                // console.log(users);
-
-                Token.remove({user: users._id}, function (err, token) {
-                    if (err) {
-                        console.log(err);
-                        res.send(err);
-                    } else {
-                        tokenGenerate(users).then(function (response) {
-                            // console.log(response);
-                            res.json(response);
-                        }, function (err) {
-                            console.log(err);
-                        });
-                    }
-
-                });
-            }
-        }
-    });
+	// console.log(req.body.email);
+	Users.findOne({'email': req.body.email}, function (err, users) {
+		if (err) {
+			console.log(err);
+			res.send(err);
+		}
+		else {
+			if (users == null) {
+				var new_user = new Users(
+					{
+						name: req.body.name,
+						social_id: req.body.user_id,
+						email: req.body.email,
+						access_key: req.body.access_key,
+						google: true,
+						picture: req.body.image_url
+					}
+				);
+				new_user.save(function (err, user) {
+					if (err) {
+						console.log(err);
+						res.send(err);
+					} else {
+						tokenGenerate(user).then(function (response) {
+							// console.log(response);
+							res.json(response);
+						}, function (err) {
+							console.log(err);
+						});
+					}
+				});
+				
+			} else {
+				users.social_id = req.body.user_id;
+				users.access_key = req.body.access_key;
+				users.picture = req.body.image_url;
+				users.google = true;
+				users.update_at = Date.now();
+				users.save();
+				// console.log(users);
+				
+				Token.remove({user: users._id}, function (err, token) {
+					if (err) {
+						console.log(err);
+						res.send(err);
+					} else {
+						tokenGenerate(users).then(function (response) {
+							// console.log(response);
+							res.json(response);
+						}, function (err) {
+							console.log(err);
+						});
+					}
+					
+				});
+			}
+		}
+	});
 };
 
 //
@@ -223,32 +223,32 @@ exports.findOrCreateAnUserGoogle = function (req, res) {
 //
 
 exports.userInfo = function (req, res) {
-    // console.log(req.header('Authorization'));
-    var extract = req.header('Authorization').split(" ");
-    var token = extract[1];
-
-    // console.log(token);
-    Token.findOne({'token': token}, function (err, token) {
-        if (err) {
-            console.log(err);
-            res.send(err);
-        } else {
-            if (token == 'null') {
-                console.log(err);
-                throw err;
-            } else {
-                // console.log(token.user);
-                Users.findOne({'_id': token.user}, function (err, user) {
-                    if (err) {
-                        console.log(err);
-                        res.send(err);
-                    } else {
-                        res.json(user);
-                    }
-                });
-            }
-        }
-    });
+	// console.log(req.header('Authorization'));
+	var extract = req.header('Authorization').split(" ");
+	var token = extract[1];
+	
+	// console.log(token);
+	Token.findOne({'token': token}, function (err, token) {
+		if (err) {
+			console.log(err);
+			res.send(err);
+		} else {
+			if (token == 'null') {
+				console.log(err);
+				throw err;
+			} else {
+				// console.log(token.user);
+				Users.findOne({'_id': token.user}, function (err, user) {
+					if (err) {
+						console.log(err);
+						res.send(err);
+					} else {
+						res.json(user);
+					}
+				});
+			}
+		}
+	});
 };
 
 
@@ -261,114 +261,114 @@ exports.userInfo = function (req, res) {
 //
 
 exports.getUserInfo = function (req, res) {
-    Users.findOne({
-        _id: req.params.user
-    }, function (err, task) {
-        if (err){
-            res.send(err);
-        }
-        res.json(task);
-    });
+	Users.findOne({
+		_id: req.params.user
+	}, function (err, task) {
+		if (err) {
+			res.send(err);
+		}
+		res.json(task);
+	});
 };
 
 exports.deleteToken = function (req, res) {
-    Token.remove({
-        _id: req.params.id
-    }, function (err, task) {
-        if (err)
-            res.send(err);
-        res.json({message: 'Token successfully deleted'});
-    });
+	Token.remove({
+		_id: req.params.id
+	}, function (err, task) {
+		if (err)
+			res.send(err);
+		res.json({message: 'Token successfully deleted'});
+	});
 };
 
 exports.getUser = function (req, res) {
-    Users.findOne({
-        _id: req.params.user
-    }, function (err, user) {
-        if (err)
-            res.send(err);
-        res.json(user);
-    });
+	Users.findOne({
+		_id: req.params.user
+	}, function (err, user) {
+		if (err)
+			res.send(err);
+		res.json(user);
+	});
 };
 
 
 exports.getAllUsers = function (req, res) {
-    var extract = req.header('Authorization').split(" ");
-    var token = extract[1];
-
-    Token.findOne({'token': token}, function (err, token) {
-        if (err) {
-            console.log(err);
-            res.send(err);
-        } else {
-            if (token == 'null') {
-                console.log(err);
-                throw err;
-            } else {
-                // console.log(token.user);
-                Users.find({'_id': {$ne: token.user}}, function (err, users) {
-                    if (err)
-                        res.send(err);
-                    res.json(users);
-                });
-            }
-        }
-    });
+	var extract = req.header('Authorization').split(" ");
+	var token = extract[1];
+	
+	Token.findOne({'token': token}, function (err, token) {
+		if (err) {
+			console.log(err);
+			res.send(err);
+		} else {
+			if (token == 'null') {
+				console.log(err);
+				throw err;
+			} else {
+				// console.log(token.user);
+				Users.find({'_id': {$ne: token.user}}, function (err, users) {
+					if (err)
+						res.send(err);
+					res.json(users);
+				});
+			}
+		}
+	});
 };
 
 exports.getAllToken = function (req, res) {
-    Token.find({}, function (err, users) {
-        if (err)
-            res.send(err);
-        res.json(users);
-    });
+	Token.find({}, function (err, users) {
+		if (err)
+			res.send(err);
+		res.json(users);
+	});
 };
 
 exports.getFriends = function (req, res) {
-    retrieveSenderUser(req.params.user, function(err, friends){
-        if(err){
-            res.json(err);
-        } else {
-            res.json(friends);
-        }
-    });
+	retrieveSenderUser(req.params.user, function (err, friends) {
+		if (err) {
+			res.json(err);
+		} else {
+			res.json(friends);
+		}
+	});
 };
 
 function retrieveSenderUser(id, callback) {
-    Friends.find({user_side: id} , {'friend_side': 1, '_id': 0})
-        .lean()
-        .populate('friend_side')
-        .exec(function(err, data){
-            if(err){
-                callback(err, null);
-            } else {
-                callback(null, data);
-            }
-        });
+	Friends.find({user_side: id}, {'friend_side': 1, '_id': 0})
+	.lean()
+	.populate('friend_side')
+	.exec(function (err, data) {
+		if (err) {
+			callback(err, null);
+		} else {
+			callback(null, data);
+		}
+	});
 };
 
 exports.postFriends = function (req, res) {
-    var newFriends = new Friends(
-        {
-            user_side: req.params.userOne,
-            friend_side: req.params.userTwo,
-            accepted: true
-        }
-    );
-
-    newFriends.save();
-
-    var newFriendsTwo = new Friends(
-        {
-            user_side: req.params.userTwo,
-            friend_side: req.params.userOne,
-            accepted: true
-        }
-    );
-
-    newFriendsTwo.save();
-
-    res.json(newFriends);
+	var newFriends = new Friends(
+		{
+			user_side: req.params.userOne,
+			friend_side: req.params.userTwo,
+			accepted: true
+		}
+	);
+	
+	newFriends.save();
+	
+	var newFriendsTwo = new Friends(
+		{
+			user_side: req.params.userTwo,
+			friend_side: req.params.userOne,
+			accepted: true
+		}
+	);
+	
+	newFriendsTwo.save();
+	
+	res.json(newFriends);
 };
 
 
