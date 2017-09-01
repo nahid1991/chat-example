@@ -15,14 +15,12 @@ require('../chat-example/api/sockets/chatSocket')(io);
 
 mongoose.connect('mongodb://localhost/Chatdb', {
     useMongoClient: true,
-    /* other options */
 });
 
 
 
 // io.sockets.on('connection', socketFile.respond);
 // socketFile(io);
-
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

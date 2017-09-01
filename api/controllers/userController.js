@@ -306,10 +306,14 @@ exports.getAllUsers = function (req, res) {
 				throw err;
 			} else {
 				// console.log(token.user);
-				Users.find({'_id': {$ne: token.user}}, function (err, users) {
-					if (err)
+				Users.paginate({'_id': {$ne: token.user}}, {page: req.query.page, limit:10}, function (err, users) {
+					if (err) {
 						res.send(err);
-					res.json(users);
+					}
+					else {
+						console.log(JSON.stringify(users));
+						res.json(users);
+					}
 				});
 			}
 		}
