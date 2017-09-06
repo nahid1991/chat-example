@@ -2,6 +2,7 @@
 
 module.exports = function (app) {
     var userController = require('../controllers/userController');
+    var friendsController = require('../controllers/friendsController');
 
     app.route('/users/facebook_login')
         .post(userController.findOrCreateAnUserFacebook);
@@ -13,13 +14,16 @@ module.exports = function (app) {
         .get(userController.userInfo);
 
     app.route('/users')
-        .get(userController.getAllUsers);
+        .get(friendsController.getAllUsers);
 
     app.route('/users/friends/:user')
-        .get(userController.getFriends);
+        .get(friendsController.getFriends);
+	
+	app.route('/people/:letters')
+	    .get(friendsController.getPeople);
 
     app.route('/users/friends_make/:userOne/:userTwo')
-        .get(userController.postFriends);
+        .get(friendsController.postFriends);
 
     app.route('/token')
         .get(userController.getAllToken);
