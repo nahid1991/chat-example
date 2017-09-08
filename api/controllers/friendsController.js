@@ -9,36 +9,41 @@ exports.getAllUsers = function (req, res) {
 	var extract = req.header('Authorization').split(" ");
 	var token = extract[1];
 	
-	Token.findOne({'token': token}, function (err, token) {
-		if (err) {
+	Token.findOne({'token': token}).then(function(token){
+		if(token == null) {
 			console.log(err);
-			res.send(err);
+			throw err;
 		} else {
-			if (token == 'null') {
+			Users.paginate({'_id': {$ne: token.user}}, {page: req.query.page, limit: 10}).then(function(users){
+				var usersList = JSON.parse(JSON.stringify(users));
+				for(var i=0; i<usersList.docs.length; i++){
+					usersList.docs[i].friend = true;
+				}
+				res.json(usersList);
+			}).catch(function(err){
 				console.log(err);
 				throw err;
-			} else {
-				Users.paginate({'_id': {$ne: token.user}}, {page: req.query.page, limit:10}, function (err, users) {
-					if (err) {
-						res.send(err);
-					}
-					else {
-						res.json(users);
-					}
-				});
-			}
+			});
 		}
+	}).catch(function(err){
+		console.log(err);
+		throw err;
 	});
 };
 
-exports.getPeople = function(req,res) {
-	Users.paginate({name: {$regex: '.*' + req.params.letters + '.*', $options: "i"}}, {page: req.query.page, limit:10}, function(err, users){
-		if(err) {
-			res.json(err);
-		} else {
-			console.log(req.params.letters);
-			res.json(users);
+exports.getPeople = function (req, res) {
+	Users.paginate({name: {$regex: '.*' + req.params.letters + '.*', $options: "i"}}, {
+		page: req.query.page,
+		limit: 10
+	}).then(function(people){
+		var usersList = JSON.parse(JSON.stringify(people));
+		for(var i=0; i<usersList.docs.length; i++){
+			usersList.docs[i].friend = false;
 		}
+		res.json(usersList);
+	}).catch(function(err){
+		console.log(err);
+		throw err;
 	});
 };
 
