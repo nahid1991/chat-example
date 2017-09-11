@@ -5,8 +5,8 @@ var Schema = mongoose.Schema;
 var Users = require('./userModel');
 
 var FriendSchema = new Schema({
-	user_side: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
-	friend_side: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
+	user: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
+	friend: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
 	chat_room: String,
 	last_talked: {
 		type: Date,

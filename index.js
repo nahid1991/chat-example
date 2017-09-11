@@ -11,7 +11,10 @@ var bodyParser = require('body-parser');
 require('../chat-example/api/sockets/chatSocket')(io);
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/Chatdb');
+mongoose.connect('mongodb://localhost:27017/Chatdb', {
+	useMongoClient: true,
+	/* other options */
+});
 
 // io.sockets.on('connection', socketFile.respond);
 // socketFile(io);
