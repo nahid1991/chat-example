@@ -84,7 +84,7 @@ exports.findOrCreateAnUserFacebook = function (req, res) {
 						email: (req.body.email) ? req.body.email : req.body.user_id,
 						access_key: req.body.access_key,
 						facebook: true,
-						picture: 'https://graph.facebook.com/' + req.body.user_id + '/picture?type=large'
+						picture: 'https://graph.facebook.com/' + req.body.user_id + '/picture?type=square'
 					}
 				);
 				new_user.save(function (err, user) {
@@ -104,7 +104,7 @@ exports.findOrCreateAnUserFacebook = function (req, res) {
 			} else {
 				users.social_id = req.body.user_id;
 				users.access_key = req.body.access_key;
-				users.picture = 'https://graph.facebook.com/' + req.body.user_id + '/picture?type=large';
+				users.picture = 'https://graph.facebook.com/' + req.body.user_id + '/picture?type=square';
 				users.facebook = true;
 				users.update_at = Date.now();
 				users.save();

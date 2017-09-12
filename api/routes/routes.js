@@ -16,7 +16,7 @@ module.exports = function (app) {
     app.route('/users')
         .get(friendsController.getAllUsers);
 
-    app.route('/users/friends/:user')
+    app.route('/users/friends')
         .get(friendsController.getFriends);
 	
 	app.route('/people/:letters')

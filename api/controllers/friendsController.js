@@ -48,34 +48,40 @@ exports.getPeople = function (req, res) {
 };
 
 exports.getFriends = function (req, res) {
-	retrieveSenderUser(req.params.user, function (err, friends) {
-		if (err) {
-			res.json(err);
+	var extract = req.header('Authorization').split(" ");
+	var token = extract[1];
+	
+	Token.findOne({'token': token}).then(function(token){
+		if(token == null) {
+			console.log(err);
+			throw err;
 		} else {
-			res.json(friends);
+			Friends.paginate({user: token.user, accepted: true}, {page: req.query.page, limit: 10, populate: 'friend', lean: true})
+			.then(function(friends){
+				// var usersList = JSON.parse(JSON.stringify(users));
+				// for(var i=0; i<usersList.docs.length; i++){
+				// 	usersList.docs[i].friend = true;
+				// }
+				console.log(JSON.stringify(friends));
+				res.json(friends);
+			}).catch(function(err){
+				console.log(err);
+				throw err;
+			});
 		}
-	});
-};
-
-function retrieveSenderUser(id, callback) {
-	Friends.find({user_side: id}, {'friend_side': 1, '_id': 0})
-	.lean()
-	.populate('friend_side')
-	.exec(function (err, data) {
-		if (err) {
-			callback(err, null);
-		} else {
-			callback(null, data);
-		}
+	}).catch(function(err){
+		console.log(err);
+		throw err;
 	});
 };
 
 exports.postFriends = function (req, res) {
 	var newFriends = new Friends(
 		{
-			user_side: req.params.userOne,
-			friend_side: req.params.userTwo,
-			accepted: true
+			user: req.params.userOne,
+			friend: req.params.userTwo,
+			chat_room: req.params.userOne + '-' + req.params.userTwo,
+			accepted: false
 		}
 	);
 	
@@ -83,9 +89,10 @@ exports.postFriends = function (req, res) {
 	
 	var newFriendsTwo = new Friends(
 		{
-			user_side: req.params.userTwo,
-			friend_side: req.params.userOne,
-			accepted: true
+			user: req.params.userTwo,
+			friend: req.params.userOne,
+			chat_room: req.params.userTwo + '-' + req.params.userOne,
+			accepted: false
 		}
 	);
 	
