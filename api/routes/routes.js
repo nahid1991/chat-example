@@ -22,7 +22,7 @@ module.exports = function (app) {
 	app.route('/people/:letters')
 	    .get(friendsController.getPeople);
 
-    app.route('/users/friends_make/:userOne/:userTwo')
+    app.route('/users/friends_make/:friendId')
         .get(friendsController.postFriends);
 
     app.route('/token')
