@@ -3,6 +3,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var mongoosePaginate = require('mongoose-paginate');
+var Friends = require('./friendsModel');
 
 var UserSchema = new Schema({
     name: {
@@ -49,6 +50,25 @@ var UserSchema = new Schema({
         default: false
     }
 });
+
+UserSchema.statics.isFriend = function(user, friend) {
+    return new Promise(function(resolve, reject) {
+        Friends.findOne({
+            user: user,
+            friend: friend,
+            accepted: true
+        }).then(function (res) {
+            if (res == null) {
+                resolve(false);
+            } else {
+                resolve(true);
+            }
+        }).catch(function(err){
+            console.log(err);
+        });
+        }
+    );
+};
 
 UserSchema.plugin(mongoosePaginate);
 

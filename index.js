@@ -1,7 +1,7 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var port = process.env.PORT || 4200;
+var port = process.env.PORT || 4201;
 var mongoose = require('mongoose');
 var Users = require('../chat-example/api/models/userModel');
 var Friends = require('../chat-example/api/models/friendsModel');
