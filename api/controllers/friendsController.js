@@ -50,7 +50,7 @@ exports.getPeople = function (req, res) {
 
 
 function getPeopleHelper(letters, page, user, res) {
-	Users.paginate({name: {$regex: '.*' + letters + '.*', $options: "i"}}, {
+	Users.paginate({$and: [{name: {$regex: '.*' + letters + '.*', $options: "i"}}, {_id: {$ne: user}}]}, {
 		page: page,
 		limit: 10
 	}).then(async function(people){
