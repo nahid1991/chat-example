@@ -1,10 +1,10 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var Users = mongoose.model('Users');
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
+let Users = mongoose.model('Users');
 
-var TokenSchema = new Schema({
+let TokenSchema = new Schema({
   user: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
   token: String
 });

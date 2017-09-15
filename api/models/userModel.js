@@ -1,11 +1,11 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var mongoosePaginate = require('mongoose-paginate');
-var Friends = require('./friendsModel');
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
+let mongoosePaginate = require('mongoose-paginate');
+let Friends = require('./friendsModel');
 
-var UserSchema = new Schema({
+let UserSchema = new Schema({
     name: {
         type: String,
         Required: 'Please enter a valid name'
@@ -59,12 +59,18 @@ UserSchema.statics.isFriend = function(user, friend) {
             accepted: true
         }).then(function (res) {
             if (res == null) {
-                resolve(false);
+                resolve({
+                    friend: false,
+                    chat_room: null
+                });
             } else {
-                resolve(true);
+                resolve({
+					friend: true,
+					chat_room: res.chat_room
+				});
             }
         }).catch(function(err){
-            console.log(err);
+            reject(err);
         });
         }
     );

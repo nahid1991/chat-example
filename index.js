@@ -1,13 +1,13 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var port = process.env.PORT || 4201;
-var mongoose = require('mongoose');
-var Users = require('../chat-example/api/models/userModel');
-var Friends = require('../chat-example/api/models/friendsModel');
-var Chat = require('../chat-example/api/models/chatModel');
-var Token = require('../chat-example/api/models/tokenModel');
-var bodyParser = require('body-parser');
+let app = require('express')();
+let http = require('http').Server(app);
+let io = require('socket.io')(http);
+let port = process.env.PORT || 4201;
+let mongoose = require('mongoose');
+let Users = require('../chat-example/api/models/userModel');
+let Friends = require('../chat-example/api/models/friendsModel');
+let Chat = require('../chat-example/api/models/chatModel');
+let Token = require('../chat-example/api/models/tokenModel');
+let bodyParser = require('body-parser');
 require('../chat-example/api/sockets/chatSocket')(io);
 
 mongoose.Promise = global.Promise;
@@ -40,7 +40,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-var routes = require('./api/routes/routes');
+let routes = require('./api/routes/routes');
 routes(app);
 
 

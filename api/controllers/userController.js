@@ -1,6 +1,6 @@
 'use strict';
 
-var mongoose = require('mongoose'),
+let mongoose = require('mongoose'),
 	Users = mongoose.model('Users'),
 	Friends = mongoose.model('Friends'),
 	Token = mongoose.model('Token');
@@ -15,11 +15,11 @@ var mongoose = require('mongoose'),
 
 
 function tokenGenerate(user) {
-	var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-	var string_length = 50;
-	var randomstring = '';
-	for (var i = 0; i < string_length; i++) {
-		var rnum = Math.floor(Math.random() * chars.length);
+	let chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+	let string_length = 50;
+	let randomstring = '';
+	for (let i = 0; i < string_length; i++) {
+		let rnum = Math.floor(Math.random() * chars.length);
 		randomstring += chars.substring(rnum, rnum + 1);
 	}
 	
@@ -31,7 +31,7 @@ function tokenGenerate(user) {
 			} else {
 				
 				if (token == null) {
-					var new_token = new Token({
+					let new_token = new Token({
 						user: user,
 						token: randomstring
 					});
@@ -77,7 +77,7 @@ exports.findOrCreateAnUserFacebook = function (req, res) {
 		}
 		else {
 			if (users == null) {
-				var new_user = new Users(
+				let new_user = new Users(
 					{
 						name: req.body.name,
 						social_id: req.body.user_id,
@@ -153,7 +153,7 @@ exports.findOrCreateAnUserGoogle = function (req, res) {
 		}
 		else {
 			if (users == null) {
-				var new_user = new Users(
+				let new_user = new Users(
 					{
 						name: req.body.name,
 						social_id: req.body.user_id,
@@ -224,8 +224,8 @@ exports.findOrCreateAnUserGoogle = function (req, res) {
 
 exports.userInfo = function (req, res) {
 	// console.log(req.header('Authorization'));
-	var extract = req.header('Authorization').split(" ");
-	var token = extract[1];
+	let extract = req.header('Authorization').split(" ");
+	let token = extract[1];
 	
 	// console.log(token);
 	Token.findOne({'token': token}, function (err, token) {

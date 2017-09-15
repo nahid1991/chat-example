@@ -1,13 +1,13 @@
 'use strict';
 
-var mongoose = require('mongoose'),
+let mongoose = require('mongoose'),
 	Users = mongoose.model('Users'),
 	Friends = mongoose.model('Friends'),
 	Token = mongoose.model('Token');
 
 exports.getAllUsers = function (req, res) {
-	var extract = req.header('Authorization').split(" ");
-	var token = extract[1];
+	let extract = req.header('Authorization').split(" ");
+	let token = extract[1];
 	
 	Token.findOne({'token': token}).then(function(token){
 		if(token == null) {
@@ -15,8 +15,8 @@ exports.getAllUsers = function (req, res) {
 			throw 500;
 		} else {
 			Users.paginate({'_id': {$ne: token.user}}, {page: req.query.page, limit: 10}).then(function(users){
-				var usersList = JSON.parse(JSON.stringify(users));
-				for(var i=0; i<usersList.docs.length; i++){
+				let usersList = JSON.parse(JSON.stringify(users));
+				for(let i=0; i<usersList.docs.length; i++){
 					usersList.docs[i].friend = true;
 				}
 				res.json(usersList);
@@ -32,33 +32,15 @@ exports.getAllUsers = function (req, res) {
 };
 
 exports.getPeople = function (req, res) {
-    var extract = req.header('Authorization').split(" ");
-    var token = extract[1];
+    let extract = req.header('Authorization').split(" ");
+    let token = extract[1];
 
-    Token.findOne({'token': token}).then(function(token){
+    Token.findOne({'token': token}).then(async function(token){
         if(token == null) {
             console.log(err);
             throw 500;
         } else {
-            Users.paginate({name: {$regex: '.*' + req.params.letters + '.*', $options: "i"}}, {
-                page: req.query.page,
-                limit: 10
-            }).then(function(people){
-                var usersList = JSON.parse(JSON.stringify(people));
-                for(var i=0; i<usersList.docs.length; i++){
-                    Users.isFriend(token.user, usersList.docs[i]._id)
-					.then(function(res){
-						return res;
-					}).catch(function(err){
-						console.log(err);
-					});
-                }
-                console.log(usersList.docs[0].friend);
-                res.json(usersList);
-            }).catch(function(err){
-                console.log(err);
-                throw 500;
-            });
+        	getPeopleHelper(req.params.letters, req.query.page, token.user, res);
         }
     }).catch(function(err){
         console.log(err);
@@ -66,25 +48,45 @@ exports.getPeople = function (req, res) {
     });
 };
 
+
+function getPeopleHelper(letters, page, user, res) {
+	Users.paginate({name: {$regex: '.*' + letters + '.*', $options: "i"}}, {
+		page: page,
+		limit: 10
+	}).then(async function(people){
+		let usersList = JSON.parse(JSON.stringify(people));
+		for(let i=0; i<usersList.docs.length; i++){
+			let verify = await Users.isFriend(user, usersList.docs[i]._id);
+			usersList.docs[i].chat_room = verify.chat_room;
+			usersList.docs[i].friend = verify.friend;
+		}
+		res.json(usersList);
+	}).catch(function(err){
+		console.log(err);
+		throw 500;
+	});
+}
+
+
 exports.getFriends = function (req, res) {
-	var extract = req.header('Authorization').split(" ");
-	var token = extract[1];
+	let extract = req.header('Authorization').split(" ");
+	let token = extract[1];
 	
 	Token.findOne({'token': token}).then(function(token){
-		if(token == null) {
+		if(token === null) {
 			console.log(err);
 			throw 500;
 		} else {
 			Friends.paginate({user: token.user, accepted: true}, {page: req.query.page, limit: 10, populate: 'friend', lean: true})
 			.then(function(friends){
-				var friendsData = {
+				let friendsData = {
 					docs : [],
 				};
-                for(var i=0; i<friends.docs.length; i++){
+                for(let i=0; i<friends.docs.length; i++){
                     friendsData.docs.push(friends.docs[i].friend);
                 }
 
-                for(var i=0; i<friendsData.docs.length; i++){
+                for(let i=0; i<friendsData.docs.length; i++){
                     friendsData.docs[i].friend = true;
                     friendsData.docs[i].chat_room = friends.docs[i].chat_room;
                 }
@@ -106,15 +108,15 @@ exports.getFriends = function (req, res) {
 };
 
 exports.postFriends = function (req, res) {
-	var extract = req.header('Authorization').split(" ");
-	var token = extract[1];
+	let extract = req.header('Authorization').split(" ");
+	let token = extract[1];
 	Token.findOne({'token': token}).then(function(token){
-		if(token == null) {
+		if(token === null) {
 			res.json({
 				'error': 'Token mismatch'
-			})
+			});
 		} else {
-			var newFriends = new Friends(
+			let newFriends = new Friends(
 				{
 					user: token.user,
 					friend: req.params.friendId,
@@ -125,7 +127,7 @@ exports.postFriends = function (req, res) {
 			
 			newFriends.save();
 			
-			var newFriendsTwo = new Friends(
+			let newFriendsTwo = new Friends(
 				{
 					user: req.params.friendId,
 					friend: token.user,

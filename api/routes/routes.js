@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = function (app) {
-    var userController = require('../controllers/userController');
-    var friendsController = require('../controllers/friendsController');
+    let userController = require('../controllers/userController');
+    let friendsController = require('../controllers/friendsController');
 
     app.route('/users/facebook_login')
         .post(userController.findOrCreateAnUserFacebook);

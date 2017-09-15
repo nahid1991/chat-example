@@ -1,10 +1,10 @@
 'use strict'
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var Users = require('./userModel');
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
+let Users = require('./userModel');
 
-var MessageSchema = new Schema({
+let MessageSchema = new Schema({
 	sender: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
 	receiver: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
 	read: Boolean,
