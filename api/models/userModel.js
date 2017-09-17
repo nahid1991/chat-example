@@ -55,19 +55,28 @@ UserSchema.statics.isFriend = function(user, friend) {
     return new Promise(function(resolve, reject) {
         Friends.findOne({
             user: user,
-            friend: friend,
-            accepted: true
+            friend: friend
         }).then(function (res) {
             if (res == null) {
                 resolve({
                     friend: false,
+                    accepted: false,
                     chat_room: null
                 });
             } else {
-                resolve({
-					friend: true,
-					chat_room: res.chat_room
-				});
+                if(res.accepted == false) {
+                    resolve({
+                        friend: true,
+                        accepted: false,
+                        chat_room: res.chat_room
+                    });
+                } else {
+                    resolve({
+                        friend: true,
+                        accepted: true,
+                        chat_room: res.chat_room
+                    });
+                }
             }
         }).catch(function(err){
             reject(err);

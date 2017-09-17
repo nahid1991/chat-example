@@ -58,6 +58,7 @@ function getPeopleHelper(letters, page, user, res) {
 		for(let i=0; i<usersList.docs.length; i++){
 			let verify = await Users.isFriend(user, usersList.docs[i]._id);
 			usersList.docs[i].chat_room = verify.chat_room;
+			usersList.docs[i].accepted = verify.accepted;
 			usersList.docs[i].friend = verify.friend;
 		}
 		res.json(usersList);
@@ -88,6 +89,7 @@ exports.getFriends = function (req, res) {
 
                 for(let i=0; i<friendsData.docs.length; i++){
                     friendsData.docs[i].friend = true;
+                    friendsData.docs[i].accepted = friends.docs[i].accepted;
                     friendsData.docs[i].chat_room = friends.docs[i].chat_room;
                 }
 
