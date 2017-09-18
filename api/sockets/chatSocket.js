@@ -13,7 +13,6 @@ module.exports = function (io){
             } catch (err) {
                 console.log(new Error(err))
             }
-            console.log(socket.rooms);
         });
 
         socket.on('message', function(msg) {
