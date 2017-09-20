@@ -5,32 +5,6 @@ let mongoose = require('mongoose'),
 	Friends = mongoose.model('Friends'),
 	Token = mongoose.model('Token');
 
-exports.getAllUsers = function (req, res) {
-	let extract = req.header('Authorization').split(" ");
-	let token = extract[1];
-	
-	Token.findOne({'token': token}).then(function(token){
-		if(token == null) {
-			console.log(err);
-			throw 500;
-		} else {
-			Users.paginate({'_id': {$ne: token.user}}, {page: req.query.page, limit: 10}).then(function(users){
-				let usersList = JSON.parse(JSON.stringify(users));
-				for(let i=0; i<usersList.docs.length; i++){
-					usersList.docs[i].friend = true;
-				}
-				res.json(usersList);
-			}).catch(function(err){
-				console.log(err);
-				throw 500;
-			});
-		}
-	}).catch(function(err){
-		console.log(err);
-		throw 500;
-	});
-};
-
 exports.getPeople = function (req, res) {
     let extract = req.header('Authorization').split(" ");
     let token = extract[1];
@@ -38,7 +12,9 @@ exports.getPeople = function (req, res) {
     Token.findOne({'token': token}).then(async function(token){
         if(token == null) {
             console.log(err);
-            throw 500;
+			res.json({
+				'error': 'Token mismatch'
+			});
         } else {
         	getPeopleHelper(req.params.letters, req.query.page, token.user, res);
         }
@@ -76,7 +52,9 @@ exports.getFriends = function (req, res) {
 	Token.findOne({'token': token}).then(function(token){
 		if(token === null) {
 			console.log(err);
-			throw 500;
+			res.json({
+				'error': 'Token mismatch'
+			});
 		} else {
 			Friends.paginate({user: token.user, accepted: true}, {page: req.query.page, limit: 10, populate: 'friend', lean: true})
 			.then(function(friends){
@@ -144,7 +122,9 @@ exports.postFriends = function (req, res) {
 		}
 	}).catch(function(err){
 		console.log(err);
-		throw 500;
+		res.json({
+			'error': 'Token mismatch'
+		});
 	});
 	
 };

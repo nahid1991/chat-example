@@ -13,9 +13,6 @@ module.exports = function (app) {
     app.route('/users/user_info')
         .get(userController.userInfo);
 
-    app.route('/users')
-        .get(friendsController.getAllUsers);
-
     app.route('/users/friends')
         .get(friendsController.getFriends);
 	
