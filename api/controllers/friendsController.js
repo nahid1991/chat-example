@@ -51,7 +51,6 @@ exports.getFriends = function (req, res) {
 	
 	Token.findOne({'token': token}).then(function(token){
 		if(token === null) {
-			console.log(err);
 			res.json({
 				'error': 'Token mismatch'
 			});
@@ -100,6 +99,7 @@ exports.postFriends = function (req, res) {
 				{
 					user: token.user,
 					friend: req.params.friendId,
+					initiator: token.user,
 					chat_room: token.user + '-' + req.params.friendId,
 					accepted: false
 				}
@@ -111,6 +111,7 @@ exports.postFriends = function (req, res) {
 				{
 					user: req.params.friendId,
 					friend: token.user,
+					initiator: token.user,
 					chat_room: req.params.friendId + '-' + token.user,
 					accepted: false
 				}

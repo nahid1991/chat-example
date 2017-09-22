@@ -8,6 +8,7 @@ let mongoosePaginate = require('mongoose-paginate');
 let FriendSchema = new Schema({
 	user: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
 	friend: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
+	initiator: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
 	chat_room: String,
 	last_talked: Date,
 	accepted: Boolean
