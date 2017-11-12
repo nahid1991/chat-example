@@ -1,6 +1,5 @@
 'use strict';
 
-
 module.exports = function (io){
     // this function expects a socket_io connection as argument
     // now we can do whatever we want:

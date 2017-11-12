@@ -19,12 +19,14 @@ module.exports = function (app) {
 	app.route('/people/:letters')
 	    .get(friendsController.getPeople);
 
-    app.route('/users/friends_make/:friendId')
+    app.route('/users/make_friends/:friendId')
         .get(friendsController.postFriends);
+
+    app.route('/users/remove_friends/:friendId')
+        .get(friendsController.removeFriends);
 
     app.route('/token')
         .get(userController.getAllToken);
-
 
     app.route('/users/:user')
         .get(userController.getUserInfo);

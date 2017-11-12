@@ -36,6 +36,7 @@ function getPeopleHelper(letters, page, user, res) {
 			usersList.docs[i].chat_room = verify.chat_room;
 			usersList.docs[i].accepted = verify.accepted;
 			usersList.docs[i].friend = verify.friend;
+			usersList.docs[i].initiator = verify.initiator;
 		}
 		res.json(usersList);
 	}).catch(function(err){
@@ -60,6 +61,7 @@ exports.getFriends = function (req, res) {
 				let friendsData = {
 					docs : [],
 				};
+
                 for(let i=0; i<friends.docs.length; i++){
                     friendsData.docs.push(friends.docs[i].friend);
                 }
@@ -86,6 +88,38 @@ exports.getFriends = function (req, res) {
 	});
 };
 
+
+exports.removeFriends = function(req, res) {
+	let extract = req.header('Authorization').split(" ");
+	let token = extract[1];
+
+    Token.findOne({'token': token}).then(function(token){
+        if(token === null) {
+            res.json({
+                'error': 'Token mismatch'
+            });
+        } else {
+        	Friends.remove({$or: [{user: token.user, friend: req.params.friendId},
+				{user: req.params.friendId, friend: token.user}]}).then(function(res) {
+					console.log(res);
+					res.json({
+						status: 'success'
+					});
+			}, function(err){
+					console.log(err);
+					res.json({
+						status: 'failed'
+					});
+			});
+        }
+    }).catch(function(err){
+        console.log(err);
+        res.json({
+            'error': 'Token mismatch'
+        });
+    });
+};
+
 exports.postFriends = function (req, res) {
 	let extract = req.header('Authorization').split(" ");
 	let token = extract[1];
@@ -95,39 +129,36 @@ exports.postFriends = function (req, res) {
 				'error': 'Token mismatch'
 			});
 		} else {
-			let newFriends = new Friends(
-				{
-					user: token.user,
-					friend: req.params.friendId,
-					initiator: token.user,
-					chat_room: token.user + '-' + req.params.friendId,
-					accepted: false
-				}
-			);
-			
-			newFriends.save();
-			
-			let newFriendsTwo = new Friends(
-				{
-					user: req.params.friendId,
-					friend: token.user,
-					initiator: token.user,
-					chat_room: req.params.friendId + '-' + token.user,
-					accepted: false
-				}
-			);
-			
-			newFriendsTwo.save();
-			
-			res.json(newFriends);
-		}
+            let newFriends = new Friends(
+                {
+                    user: token.user,
+                    friend: req.params.friendId,
+                    initiator: token.user,
+                    chat_room: token.user + '-' + req.params.friendId,
+                    accepted: false
+                }
+            );
+
+            newFriends.save();
+
+            let newFriendsTwo = new Friends(
+                {
+                    user: req.params.friendId,
+                    friend: token.user,
+                    initiator: token.user,
+                    chat_room: req.params.friendId + '-' + token.user,
+                    accepted: false
+                }
+            );
+
+            newFriendsTwo.save();
+
+            res.json(newFriends);
+        }
 	}).catch(function(err){
 		console.log(err);
 		res.json({
 			'error': 'Token mismatch'
 		});
 	});
-	
 };
-
-

@@ -68,12 +68,14 @@ UserSchema.statics.isFriend = function(user, friend) {
                     resolve({
                         friend: true,
                         accepted: false,
+                        initiator: res.initiator,
                         chat_room: res.chat_room
                     });
                 } else {
                     resolve({
                         friend: true,
                         accepted: true,
+                        initiator: res.initiator,
                         chat_room: res.chat_room
                     });
                 }
