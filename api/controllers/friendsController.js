@@ -100,8 +100,8 @@ exports.removeFriends = function(req, res) {
             });
         } else {
         	Friends.remove({$or: [{user: token.user, friend: req.params.friendId},
-				{user: req.params.friendId, friend: token.user}]}).then(function(res) {
-					console.log(res);
+				{user: req.params.friendId, friend: token.user}]}).then(function(response) {
+					console.log(response);
 					res.json({
 						status: 'success'
 					});
