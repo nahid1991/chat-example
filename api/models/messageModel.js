@@ -8,6 +8,7 @@ let MessageSchema = new Schema({
 	sender: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
 	receiver: {type: mongoose.Schema.Types.ObjectId, ref: 'Users'},
 	read: Boolean,
+	created_at: Date,
 	message: String
 });
 

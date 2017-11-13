@@ -1,5 +1,9 @@
 'use strict';
 
+let mongoose = require('mongoose'),
+    Users = mongoose.model('Users'),
+    Friends = mongoose.model('Friends');
+
 module.exports = function (io){
     // this function expects a socket_io connection as argument
     // now we can do whatever we want:
@@ -17,6 +21,44 @@ module.exports = function (io){
         socket.on('message', function(msg) {
             io.emit(msg.chat_room_user, msg);
             io.emit(msg.chat_room_friend, msg);
+        });
+
+        socket.on('removeFriend', function(data, fn){
+            Friends.remove({$or: [{user: data.sender, friend: data.receiver},
+                {user: data.receiver, friend: data.sender}]}).then(function(response) {
+                    fn({success: true});
+            }, function(err){
+                console.log(err);
+                fn({success: false});
+            });
+        });
+
+        socket.on('addFriend', function(data, fn){
+            let newFriends = new Friends(
+                {
+                    user: data.sender,
+                    friend: data.receiver,
+                    initiator: data.sender,
+                    chat_room: data.sender + '-' + data.receiver,
+                    accepted: false
+                }
+            );
+
+            newFriends.save();
+
+            let newFriendsTwo = new Friends(
+                {
+                    user: data.receiver,
+                    friend: data.sender,
+                    initiator: data.sender,
+                    chat_room: data.receiver + '-' + data.sender,
+                    accepted: false
+                }
+            );
+
+            newFriendsTwo.save();
+
+            fn({success: true});
         });
 
         socket.on('disconnect', function(){

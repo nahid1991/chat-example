@@ -56,7 +56,8 @@ exports.getFriends = function (req, res) {
 				'error': 'Token mismatch'
 			});
 		} else {
-			Friends.paginate({user: token.user, accepted: true}, {page: req.query.page, limit: 10, populate: 'friend', lean: true})
+			Friends.paginate({$or:[{user: token.user, accepted: true}, {user: token.user, accepted: false, initiator: {$ne: token.user}}]},
+				{page: req.query.page, limit: 10, populate: 'friend', lean: true, sort:{last_talked: -1}})
 			.then(function(friends){
 				let friendsData = {
 					docs : [],
