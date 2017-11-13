@@ -32,6 +32,23 @@ module.exports = function (io){
                 fn({success: false});
             });
         });
+	
+		socket.on('acceptFriend', function(data, fn){
+			Friends.update({user: data.sender, friend: data.receiver}, {$set: {accepted: true}}).then(function(response) {
+			    console.log(response);
+			    Friends.update({user: data.receiver, friend: data.sender}, {$set: {accepted: true}}).then(function(res){
+					console.log(res);
+			        fn({success: true});
+                }, function(err){
+			        console.log(err);
+			        fn({success: false});
+                });
+				
+			}, function(err){
+				console.log(err);
+				fn({success: false});
+			});
+		});
 
         socket.on('addFriend', function(data, fn){
             let newFriends = new Friends(
@@ -40,7 +57,8 @@ module.exports = function (io){
                     friend: data.receiver,
                     initiator: data.sender,
                     chat_room: data.sender + '-' + data.receiver,
-                    accepted: false
+                    accepted: false,
+                    last_talked: Date.now()
                 }
             );
 
@@ -52,7 +70,8 @@ module.exports = function (io){
                     friend: data.sender,
                     initiator: data.sender,
                     chat_room: data.receiver + '-' + data.sender,
-                    accepted: false
+                    accepted: false,
+					last_talked: Date.now()
                 }
             );
 
