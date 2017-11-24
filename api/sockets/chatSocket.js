@@ -47,6 +47,7 @@ module.exports = function (io) {
                 }, {$set: {accepted: true}}).then(function (res) {
                     console.log(res);
                     fn({success: true});
+					io.emit(data.receiver+'-receivedRequest', data.user_info);
                 }, function (err) {
                     console.log(err);
                     fn({success: false});
