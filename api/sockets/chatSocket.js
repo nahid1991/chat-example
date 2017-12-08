@@ -19,7 +19,7 @@ module.exports = function (io) {
         });
 
         socket.on('message', function (msg) {
-            io.emit(msg.chat_room_user, msg);
+            // io.emit(msg.chat_room_user, msg);
             io.emit(msg.chat_room_friend, msg);
         });
 
