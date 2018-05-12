@@ -21,6 +21,27 @@ module.exports = function (io) {
         socket.on('message', function (msg) {
             // io.emit(msg.chat_room_user, msg);
             io.emit(msg.chat_room_friend, msg);
+            let friends = msg.chat_room_user.split("-");
+            let user = friends[0];
+            let friend = friends[1];
+
+            Friends.update({
+                user: user,
+                friend: friend,
+            }, {$set: {last_talked: Date.now()}}).then(function (response) {
+                console.log(response);
+                Friends.update({
+                    user: friend,
+                    friend: user
+                }, {$set: {last_talked: Date.now()}}).then(function (res) {
+                    console.log(res);
+                    io.emit(friend+'-friendsUpdate', user);
+                }, function (err) {
+                    console.log(err);
+                });
+            }, function (err) {
+                console.log(err);
+            });
         });
 
         socket.on('removeFriend', function (data, fn) {
@@ -39,12 +60,12 @@ module.exports = function (io) {
             Friends.update({
                 user: data.sender,
                 friend: data.receiver
-            }, {$set: {accepted: true}}).then(function (response) {
+            }, {$set: {accepted: true, last_talked: Date.now()}}).then(function (response) {
                 console.log(response);
                 Friends.update({
                     user: data.receiver,
                     friend: data.sender
-                }, {$set: {accepted: true}}).then(function (res) {
+                }, {$set: {accepted: true, last_talked: Date.now()}}).then(function (res) {
                     console.log(res);
                     fn({success: true});
 					io.emit(data.receiver+'-receivedRequest', data.user_info);
@@ -52,7 +73,6 @@ module.exports = function (io) {
                     console.log(err);
                     fn({success: false});
                 });
-
             }, function (err) {
                 console.log(err);
                 fn({success: false});
