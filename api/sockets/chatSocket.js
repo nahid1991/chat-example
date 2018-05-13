@@ -35,7 +35,7 @@ module.exports = function (io) {
                     friend: user
                 }, {$set: {last_talked: Date.now()}}).then(function (res) {
                     console.log(res);
-                    io.emit(friend+'-friendsUpdate', user);
+                    io.emit(friend+'friendsUpdate', user);
                 }, function (err) {
                     console.log(err);
                 });
@@ -68,7 +68,7 @@ module.exports = function (io) {
                 }, {$set: {accepted: true, last_talked: Date.now()}}).then(function (res) {
                     console.log(res);
                     fn({success: true});
-					io.emit(data.receiver+'-receivedRequest', data.user_info);
+                    io.emit(data.receiver+'receivedRequest', data.user_info);
                 }, function (err) {
                     console.log(err);
                     fn({success: false});
@@ -106,11 +106,16 @@ module.exports = function (io) {
 
             newFriendsTwo.save();
 
-            fn({success: true});
-
-            Users.findOne({_id: data.sender}).then(function(user){
-                io.emit(data.receiver+'-receivedRequest', user);
+            Users.findOne({_id: data.sender}).then((user) => {
+                try{
+                    console.log(data.receiver+'-receivedRequest');
+                    io.emit(String(data.receiver)+'-receivedRequest', user);
+                } catch(err) {
+                    console.log(err);
+                }
             });
+
+            fn({success: true});
         });
 
         socket.on('disconnect', function () {
