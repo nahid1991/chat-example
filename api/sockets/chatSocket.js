@@ -4,6 +4,8 @@ let mongoose = require('mongoose'),
     Users = mongoose.model('Users'),
     Friends = mongoose.model('Friends');
 
+let message = require('../controllers/messageController');
+
 module.exports = function (io) {
     // this function expects a socket_io connection as argument
     // now we can do whatever we want:
@@ -41,6 +43,12 @@ module.exports = function (io) {
                 });
             }, function (err) {
                 console.log(err);
+            });
+
+            message.SaveMessage({
+                user: user,
+                friend: friend,
+                msg: msg.message
             });
         });
 
