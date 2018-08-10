@@ -37,7 +37,18 @@ module.exports = function (io) {
                     friend: user
                 }, {$set: {last_talked: Date.now()}}).then(function (res) {
                     console.log(res);
-                    io.emit(friend+'-friendsUpdate', user);
+                    Friends.findOne({user: friend, friend: user, accepted: true}).populate('friend')
+                    .then(function (returnedFriend) {
+                        let finalFriend = returnedFriend.friend;
+                        finalFriend.chat_room = returnedFriend.chat_room;
+                        finalFriend.friend = true;
+                        finalFriend.accepted = returnedFriend.accepted;
+                        io.emit(friend+'-friendsUpdate', finalFriend);
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                        throw 500;
+                    });
                 }, function (err) {
                     console.log(err);
                 });
