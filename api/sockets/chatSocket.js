@@ -16,7 +16,7 @@ module.exports = function (io) {
             try {
                 socket.join(room);
             } catch (err) {
-                console.log(new Error(err))
+                console.log(new Error(err));
             }
         });
 
